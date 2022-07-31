@@ -4,7 +4,9 @@ function resolve (dir) {
 }
 
 module.exports = {
-  publicPath: '/',
+  publicPath: process.env.NODE_ENV === 'production'
+    ? '/fly-form-generator/'
+    : '/',
   devServer: {
     overlay: false
   },
