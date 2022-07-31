@@ -3,7 +3,7 @@ import draggable from 'vuedraggable'
 import render from '@/components/render/render'
 
 const components = {
-  itemBtns(h, currentItem, index, list) {
+  itemBtns (h, currentItem, index, list) {
     const { copyItem, deleteItem } = this.$listeners
     return [
       <span class="drawing-item-copy" title="复制" onClick={event => {
@@ -20,7 +20,7 @@ const components = {
   }
 }
 const layouts = {
-  colFormItem(h, currentItem, index, list) {
+  colFormItem (h, currentItem, index, list) {
     const { activeItem } = this.$listeners
     const config = currentItem.__config__
     const child = renderChildren.apply(this, arguments)
@@ -43,7 +43,7 @@ const layouts = {
       </el-col>
     )
   },
-  rowFormItem(h, currentItem, index, list) {
+  rowFormItem (h, currentItem, index, list) {
     const { activeItem } = this.$listeners
     const config = currentItem.__config__
     const className = this.activeId === config.formId
@@ -52,8 +52,8 @@ const layouts = {
     let child = renderChildren.apply(this, arguments)
     if (currentItem.type === 'flex') {
       child = <el-row type={currentItem.type} justify={currentItem.justify} align={currentItem.align}>
-              {child}
-            </el-row>
+        {child}
+      </el-row>
     }
     return (
       <el-col span={config.span}>
@@ -69,7 +69,7 @@ const layouts = {
       </el-col>
     )
   },
-  raw(h, currentItem, index, list) {
+  raw (h, currentItem, index, list) {
     const config = currentItem.__config__
     const child = renderChildren.apply(this, arguments)
     return <render key={config.renderKey} conf={currentItem} onInput={ event => {
@@ -80,7 +80,7 @@ const layouts = {
   }
 }
 
-function renderChildren(h, currentItem, index, list) {
+function renderChildren (h, currentItem, index, list) {
   const config = currentItem.__config__
   if (!Array.isArray(config.children)) return null
   return config.children.map((el, i) => {
@@ -92,7 +92,7 @@ function renderChildren(h, currentItem, index, list) {
   })
 }
 
-function layoutIsNotFound() {
+function layoutIsNotFound () {
   throw new Error(`没有与${this.currentItem.__config__.layout}匹配的layout`)
 }
 
@@ -108,7 +108,7 @@ export default {
     'activeId',
     'formConf'
   ],
-  render(h) {
+  render (h) {
     const layout = layouts[this.currentItem.__config__.layout]
 
     if (layout) {

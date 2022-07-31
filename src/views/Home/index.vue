@@ -95,7 +95,6 @@ import draggable from 'vuedraggable'
 // 左侧便利的按钮
 import { inputComponents, formConf } from '@/components/generator/config'
 import drawingDefalut from '@/components/generator/drawingDefalut'
-
 export default {
   name: 'Home',
   components: {
