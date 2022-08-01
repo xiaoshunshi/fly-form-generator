@@ -45,6 +45,8 @@ const layouts = {
     // console.log(this.$listeners)
     const { activeItem } = this.$listeners
     const config = currentItem.__config__
+    const child = renderChildren.apply(this, arguments)
+
     let className = this.activeId === config.formId ? 'drawing-item active-from-item' : 'drawing-item'
     if (this.formConf.unFocusedComponentBorder) className += ' unfocus-bordered'
     let labelWidth = config.labelWidth ? `${config.labelWidth}px` : null
@@ -53,11 +55,25 @@ const layouts = {
       nativeOnClick={event => { activeItem(currentItem); event.stopPropagation() }}>
       <el-form-item label-width={labelWidth}
         label={config.showLabel ? config.label : ''} required={config.required}>
-        <render conf={currentItem}></render>
+        <render key={config.renderKey} conf={currentItem}
+          onInput={ val => {
+            // console.log('父组件')
+            this.$set(config, 'defaultValue', val)
+          }}>{child}</render>
       </el-form-item>
-
     </el-col>
   }
+}
+function renderChildren (h, currentItem, index, list) {
+  const config = currentItem.__config__
+  if (!Array.isArray(config.children)) return null
+  return config.children.map((el, i) => {
+    const layout = layouts[el.__config__.layout]
+    if (layout) {
+      return layout.call(this, h, el, i, config.children)
+    }
+    return layoutIsNotFound.call(this)
+  })
 }
 function layoutIsNotFound () {
   throw new Error(`没有与${this.currentItem.__config__.layout}匹配的layout`)
@@ -68,8 +84,6 @@ export default {
   },
   props: ['currentItem', 'index', 'drawingList', 'activeId', 'formConf'],
   render (h) {
-    console.log(this.currentItem.__config__.layout)
-
     const layout = layouts[this.currentItem.__config__.layout]
     if (layout) {
       return layout.call(

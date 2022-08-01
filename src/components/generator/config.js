@@ -22,7 +22,7 @@ export const inputComponents = [
       append: ''
     },
     // 其余的为可直接写在组件标签上的属性
-    placeholder: '请输入1231231321',
+    placeholder: '请输入',
     style: { width: '100%' },
     clearable: true,
     'prefix-icon': '',

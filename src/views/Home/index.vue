@@ -93,6 +93,7 @@
         </el-row>
       </el-scrollbar>
     </div>
+
   </div>
 </template>
 
@@ -104,7 +105,12 @@ import draggable from 'vuedraggable'
 import { inputComponents, formConf } from '@/components/generator/config'
 import drawingDefalut from '@/components/generator/drawingDefalut'
 import DraggableItem from './components/DraggableItem'
+// import RightPanel from './components/RightPanel'
+import { deepClone } from '@/utils/index'
+import { getIdGlobal } from '@/utils/db'
 
+let tempActiveData
+const idGlobal = getIdGlobal()
 export default {
   name: 'Home',
   components: {
@@ -113,6 +119,7 @@ export default {
   },
   data () {
     return {
+      idGlobal,
       drawingList: drawingDefalut,
       drawingData: {},
       activeId: drawingDefalut[0].formId,
@@ -151,8 +158,19 @@ export default {
       console.log(this.activeId)
     },
     cloneComponent (origin) {
-      console.log('拖动赋值clone')
-      console.log(origin)
+      const clone = deepClone(origin)
+      const config = clone.__config__
+      config.span = this.formConf.span // 生成代码时，会根据span做精简判断
+      this.createIdAndKey(clone)
+      clone.placeholder !== undefined && (clone.placeholder += config.label)
+      tempActiveData = clone
+      return tempActiveData
+    },
+    createIdAndKey (item) {
+      const config = item.__config__
+      console.log(config)
+      console.log(this.drawingList)
+      // config.formId = ++this.idGlobal
     },
     onEnd (obj) {
       if (obj.from !== obj.to) {

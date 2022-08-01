@@ -1,4 +1,28 @@
 import { deepClone } from '@/utils'
+const componentChild = {}
+/**
+ * 将./slots中的文件挂载到对象componentChild上
+ * 文件名为key，对应JSON配置中的__config__.tag
+ * 文件内容为value，解析JSON配置中的__slot__
+ */
+const slotsFiles = require.context('./slots', false, /\.js$/)
+const keys = slotsFiles.keys() || []
+keys.forEach(key => {
+  const tag = key.replace(/^\.\/(.*)\.\w+$/, '$1')
+  const value = slotsFiles(key).default
+  componentChild[tag] = value
+})
+function mountSlotFiles (h, confClone, children) {
+  const childObjs = componentChild[confClone.__config__.tag]
+  if (childObjs) {
+    Object.keys(childObjs).forEach(key => {
+      const childFunc = childObjs[key]
+      if (confClone.__slot__ && confClone.__slot__[key]) {
+        children.push(childFunc(h, confClone, key))
+      }
+    })
+  }
+}
 
 function makeDataObject () {
   // 深入数据对象：
@@ -20,41 +44,24 @@ function makeDataObject () {
   }
 }
 function buildDataObject (confClone, dataObject) {
-  //  {
-  //   __config__: {
-  //     label: "单行文本",
-  //     labelWidth: null,
-  //     showLabel: true,
-  //     changeTag: true,
-  //     tag: "el-input",
-  //     tagIcon: "input",
-  //     required: true,
-  //     layout: "colFormItem",
-  //     span: 24,
-  //     document: "https://element.eleme.cn/#/zh-CN/component/input",
-  //     regList: [
-  //       { pattern: "/^1(3|4|5|7|8|9)\\d{9}$/", message: "手机号格式错误" },
-  //     ],
-  //   },
-  //   __slot__: { prepend: "", append: "" },
-  //   __vModel__: "mobile",
-  //   placeholder: "请输入手机号",
-  //   style: { width: "100%" },
-  //   clearable: true,
-  //   "prefix-icon": "el-icon-mobile",
-  //   "suffix-icon": "",
-  //   maxlength: 11,
-  //   "show-word-limit": true,
-  //   readonly: false,
-  //   disabled: false,
-  // };
   Object.keys(confClone).forEach(key => {
     const val = confClone[key]
-    if (key === ' __vModel__') {
+    if (key === '__vModel__') {
       // formItem上的属性
-
+      vModel.call(this, dataObject, confClone.__config__.defaultValue)
     } else if (dataObject[key] !== undefined) {
-
+      // style 的属性
+    //   console.log(key)
+    //   console.log('confClone上面不存在的属性')
+      if (dataObject[key] === null ||
+        dataObject[key] instanceof RegExp ||
+        ['boolean', 'string', 'number', 'function'].includes(typeof dataObject[key])) {
+        dataObject[key] = val
+      } else if (Array.isArray(dataObject[key])) {
+        dataObject[key] = [...dataObject[key], ...val]
+      } else {
+        dataObject[key] = { ...dataObject[key], ...val }
+      }
     } else {
       dataObject.attrs[key] = val
     }
@@ -69,6 +76,25 @@ function clearAttrs (dataObject) {
   delete dataObject.attrs.__slot__
   delete dataObject.attrs.__methods__
 }
+
+function vModel (dataObject, defaultValue) {
+  dataObject.props.value = defaultValue
+  dataObject.on.input = val => {
+    this.$emit('input', val)
+  }
+}
+
+function emitEvents (confClone) {
+  ['on', 'nativeOn'].forEach(attr => {
+    const eventKeyList = Object.keys(confClone[attr] || {})
+    eventKeyList.forEach(key => {
+      const val = confClone[attr][key]
+      if (typeof val === 'string') {
+        confClone[attr][key] = event => this.$emit(val, event)
+      }
+    })
+  })
+}
 export default {
   props: {
     conf: {
@@ -80,8 +106,13 @@ export default {
     const dataObject = makeDataObject()
     const confClone = deepClone(this.conf)
     const children = this.$slots.default || []
-
+    // console.log(this)
+    // 将字符串类型的事件，发送为消息
+    mountSlotFiles.call(this, h, confClone, children)
+    emitEvents.call(this, confClone)
+    // 将json表单配置转化为vue render可以识别的 “数据对象（dataObject）”
     buildDataObject.call(this, confClone, dataObject)
+    // console.log(dataObject)
 
     return h(this.conf.__config__.tag, dataObject, children)
   }
