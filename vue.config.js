@@ -8,6 +8,8 @@ module.exports = {
     ? '/fly-form-generator/'
     : '/',
   devServer: {
+    port: 3000,
+    open: true,
     overlay: false
   },
   productionSourceMap: false,
