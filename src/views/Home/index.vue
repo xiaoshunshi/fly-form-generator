@@ -140,13 +140,15 @@ export default {
     /**
      * @Tip: xiaoshunshi  | V 1.0.0.0
      * @Date: 2022-08-01 15:51:20
-     * @Description:
+     * @Description:  Native传入返回的点击事件
      * @param {*} currentItem
      * @return {*}
      */
     activeFormItem (currentItem) {
+      // console.log('Native传入返回的点击事件')
       this.activeData = currentItem
       this.activeId = currentItem.__config__.formId
+      console.log(this.activeId)
     },
     cloneComponent (origin) {
       console.log('拖动赋值clone')

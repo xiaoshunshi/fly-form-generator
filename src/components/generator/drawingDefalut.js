@@ -1,7 +1,7 @@
 export default [
   {
     __config__: {
-      label: '单行文本',
+      label: '测试lable',
       labelWidth: null,
       showLabel: true,
       changeTag: true,
