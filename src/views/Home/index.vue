@@ -33,6 +33,7 @@
                 class="components-item"
                 v-for="(element, index) in item.list"
                 :key="index"
+                 @click="addComponent(element)"
               >
                 <div class="components-body">
                   <svg-icon :icon-class="element.__config__.tagIcon" />
@@ -84,6 +85,8 @@
                 :active-id="activeId"
                 :form-conf="formConf"
                 @activeItem="activeFormItem"
+                @copyItem="drawingItemCopy"
+                @deleteItem="drawingItemDelete"
               />
             </draggable>
             <div v-show="!drawingList.length" class="empty-info">
@@ -144,6 +147,42 @@ export default {
     }
   },
   methods: {
+    /**
+     * @Tip: xiaoshunshi  | V 1.0.0.0
+     * @Date: 2022-08-02 10:55:57
+     * @Description: 点击添加input
+     * @param {*} item
+     * @return {*}
+     */
+    addComponent (item) {
+      const clone = this.cloneComponent(item)
+      this.fetchData(clone)
+      this.drawingList.push(clone)
+      this.activeFormItem(clone)
+    },
+    /**
+     * @Tip: xiaoshunshi  | V 1.0.0.0
+     * @Date: 2022-08-02 10:56:19
+     * @Description: 复制
+     * @param {*} item
+     * @param {*} list
+     * @return {*}
+     */
+    drawingItemCopy (item, list) {
+      let clone = deepClone(item)
+      clone = this.createIdAndKey(clone)
+      list.push(clone)
+      this.activeFormItem(clone)
+    },
+    drawingItemDelete (index, list) {
+      list.splice(index, 1)
+      this.$nextTick(() => {
+        const len = this.drawingList.length
+        if (len) {
+          this.activeFormItem(this.drawingList[len - 1])
+        }
+      })
+    },
     /**
      * @Tip: xiaoshunshi  | V 1.0.0.0
      * @Date: 2022-08-01 15:51:20

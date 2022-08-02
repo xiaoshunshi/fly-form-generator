@@ -1,6 +1,22 @@
 <script>
 import render from '@/components/render/render'
-
+const components = {
+  itemBtns (h, currentItem, index, list) {
+    const { copyItem, deleteItem } = this.$listeners
+    return [
+      <span class="drawing-item-copy" title="复制" onClick={event => {
+        copyItem(currentItem, list); event.stopPropagation()
+      }}>
+        <i class="el-icon-copy-document" />
+      </span>,
+      <span class="drawing-item-delete" title="删除" onClick={event => {
+        deleteItem(index, list); event.stopPropagation()
+      }}>
+        <i class="el-icon-delete" />
+      </span>
+    ]
+  }
+}
 const layouts = {
   /**
    * @Tip: xiaoshunshi  | V 1.0.0.0
@@ -60,6 +76,7 @@ const layouts = {
             this.$set(config, 'defaultValue', val)
           }}>{child}</render>
       </el-form-item>
+      {components.itemBtns.apply(this, arguments)}
     </el-col>
   }
 }
