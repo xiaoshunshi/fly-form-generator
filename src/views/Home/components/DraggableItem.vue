@@ -57,7 +57,6 @@ const layouts = {
         label={config.showLabel ? config.label : ''} required={config.required}>
         <render key={config.renderKey} conf={currentItem}
           onInput={ val => {
-            // console.log('父组件')
             this.$set(config, 'defaultValue', val)
           }}>{child}</render>
       </el-form-item>
