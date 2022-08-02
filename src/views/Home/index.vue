@@ -155,7 +155,6 @@ export default {
       // console.log('Native传入返回的点击事件')
       this.activeData = currentItem
       this.activeId = currentItem.__config__.formId
-      console.log(this.activeId)
     },
     cloneComponent (origin) {
       const clone = deepClone(origin)
@@ -170,14 +169,40 @@ export default {
       const config = item.__config__
       console.log(config)
       console.log(this.drawingList)
-      // config.formId = ++this.idGlobal
+      config.formId = ++this.idGlobal
+      config.renderKey = `${config.formId}${+new Date()}`
+      if (config.layout === 'colFormItem') {
+        item.__vModel__ = `field${this.idGlobal}`
+      } else if (config.layout === 'rowFormItem') {
+        config.componentName = `row${this.idGlobal}`
+        !Array.isArray(config.children) && (config.children = [])
+        delete config.label // rowFormItem无需配置label属性
+      }
+      if (Array.isArray(config.children)) {
+        config.children = config.children.map(childItem => this.createIdAndKey(childItem))
+      }
+      return item
     },
     onEnd (obj) {
       if (obj.from !== obj.to) {
         console.log('拖动结束！')
-        // this.fetchData(tempActiveData)
-        // this.activeData = tempActiveData
-        // this.activeId = this.idGlobal
+        this.fetchData(tempActiveData)
+        this.activeData = tempActiveData
+        this.activeId = this.idGlobal
+      }
+    },
+    fetchData (component) {
+      console.log(component)
+      const { dataType, method, url } = component.__config__
+      if (dataType === 'dynamic' && method && url) {
+        this.setLoading(component, true)
+        this.$axios({
+          method,
+          url
+        }).then(resp => {
+          this.setLoading(component, false)
+          this.setRespData(component, resp.data)
+        })
       }
     }
   }

@@ -31,34 +31,34 @@ export const inputComponents = [
     'show-word-limit': false,
     readonly: false,
     disabled: false
+  },
+  {
+    __config__: {
+      label: '多行文本',
+      labelWidth: null,
+      showLabel: true,
+      tag: 'el-input',
+      tagIcon: 'textarea',
+      defaultValue: undefined,
+      required: true,
+      layout: 'colFormItem',
+      span: 24,
+      regList: [],
+      changeTag: true,
+      document: 'https://element.eleme.cn/#/zh-CN/component/input'
+    },
+    type: 'textarea',
+    placeholder: '请输入',
+    autosize: {
+      minRows: 4,
+      maxRows: 4
+    },
+    style: { width: '100%' },
+    maxlength: null,
+    'show-word-limit': false,
+    readonly: false,
+    disabled: false
   }
-  // {
-  //   __config__: {
-  //     label: '多行文本',
-  //     labelWidth: null,
-  //     showLabel: true,
-  //     tag: 'el-input',
-  //     tagIcon: 'textarea',
-  //     defaultValue: undefined,
-  //     required: true,
-  //     layout: 'colFormItem',
-  //     span: 24,
-  //     regList: [],
-  //     changeTag: true,
-  //     document: 'https://element.eleme.cn/#/zh-CN/component/input'
-  //   },
-  //   type: 'textarea',
-  //   placeholder: '请输入',
-  //   autosize: {
-  //     minRows: 4,
-  //     maxRows: 4
-  //   },
-  //   style: { width: '100%' },
-  //   maxlength: null,
-  //   'show-word-limit': false,
-  //   readonly: false,
-  //   disabled: false
-  // },
   // {
   //   __config__: {
   //     label: '密码',
